@@ -18,24 +18,19 @@ window.onload = () => {
     console.log(urlParams.get('error'))
   }
 }
-//@ts-ignore
-window.onSpotifyIframeApiReady = (IFrameAPI) => {
-  const element = document.getElementById('embed-iframe');
-  const options = {
-      uri: 'spotify:episode:7makk4oTQel546B0PZlDM5'
-    };
-    //@ts-ignore
-  const callback = (EmbedController) => {};
-  IFrameAPI.createController(element, options, callback);
-}
+
 
 function App() {
+  const [songId, setSongId] = React.useState("")
+  /*React.useEffect(() => {
+    setSongId('spotify:track:37nYSBS0MfRCm913QwCCYo')
+  }, [])*/
   //TODO dark mode on default and import font
   return (
     <div className="App">
       <button onClick={authorizeUser}>click</button>
-      <PlayerEmbed />
-      
+      <PlayerEmbed songId={songId}/>
+      <button onClick={() => {setSongId('spotify:track:37nYSBS0MfRCm913QwCCYo')}}>song</button>
     </div>
   )
 }
