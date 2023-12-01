@@ -117,14 +117,14 @@ interface ISong {
 
 export const getSong = (id: string) => {
     const accessToken = localStorage.getItem('access_token')
-    let song: ISong
+    let songObj: ISong
     fetch(`https://api.spotify.com/v1/audio-features/${id}`, {
         method: 'GET',
         headers: { 
             Authorization: `Bearer ${accessToken}`
         },
     }).then(response => response.json()).then(song => {
-        song = {
+        songObj = {
             id: song.id,
             acousticness: song.acousticness,
             danceability: song.danceability,
@@ -135,8 +135,50 @@ export const getSong = (id: string) => {
             tempo: song.tempo,
             valence: song.valence,
         }
-        return song
+        console.log(songObj)
+        return songObj
     }).catch(error => {console.error(error)});
+}
+
+const likedSongs: ISong[] = []
+
+const addLikedSong = (song: ISong) => {
+    likedSongs.push(song)
+}
+
+const getRecommendations = () => {
+    const accessToken = localStorage.getItem('access_token')
+    const url = "https://api.spotify.com/v1/recommendations?"
+    const params = {
+        limit: 5,
+        seed_tracks: new Array<string>(),
+        target_acousticness: 0,
+        target_danceability: 0,
+        target_energy: 0,
+        target_instrumentalness: 0,
+        target_liveness: 0,
+        target_loudness: 0,
+        target_tempo: 0,
+        target_valence: 0,
+    }
+    likedSongs.slice(-5).forEach((song: ISong) => {
+        params.seed_tracks.push(song.id)
+        params.target_acousticness += song.acousticness/5
+        params.target_danceability += song.danceability/5
+        params.target_energy += song.energy/5
+        params.target_instrumentalness += song.instrumentalness/5
+        params.target_liveness += song.liveness/5
+        params.target_loudness += song.loudness/5
+        params.target_tempo += song.tempo/5
+        params.target_valence += song.valence/5
+    })
+    const urlParams = new URLSearchParams("")
+    for (const [key, value] of Object.entries(params)) {
+        urlParams.append(key, value)
+    }
+    fetch("https://api.spotify.com/v1/recommendations", {
+
+    })
 }
 
 
