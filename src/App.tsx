@@ -1,5 +1,5 @@
 import React from 'react'
-import { authorizeUser, getToken } from './spotifyManager'
+import { authorizeUser, getToken, getSong } from './spotifyManager'
 import PlayerEmbed from './Components/PlayerEmbed'
 
 let code: string | null
@@ -19,18 +19,15 @@ window.onload = () => {
   }
 }
 
-
 function App() {
   const [songId, setSongId] = React.useState("")
-  /*React.useEffect(() => {
-    setSongId('spotify:track:37nYSBS0MfRCm913QwCCYo')
-  }, [])*/
   //TODO dark mode on default and import font
   return (
     <div className="App">
       <button onClick={authorizeUser}>click</button>
       <PlayerEmbed songId={songId}/>
-      <button onClick={() => {setSongId('spotify:track:37nYSBS0MfRCm913QwCCYo')}}>song</button>
+      <button onClick={() => {setSongId('37nYSBS0MfRCm913QwCCYo')}}>song</button>
+      <button onClick={() => {getSong('37nYSBS0MfRCm913QwCCYo')}}>consolelog</button>
     </div>
   )
 }

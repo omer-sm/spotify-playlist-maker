@@ -103,7 +103,41 @@ export const refreshToken = async () => {
     }
    }
 
+interface ISong {
+    id: string
+    acousticness: number
+    danceability: number
+    energy: number
+    instrumentalness: number
+    liveness: number
+    loudness: number
+    tempo: number
+    valence: number
+}
 
+export const getSong = (id: string) => {
+    const accessToken = localStorage.getItem('access_token')
+    let song: ISong
+    fetch(`https://api.spotify.com/v1/audio-features/${id}`, {
+        method: 'GET',
+        headers: { 
+            Authorization: `Bearer ${accessToken}`
+        },
+    }).then(response => response.json()).then(song => {
+        song = {
+            id: song.id,
+            acousticness: song.acousticness,
+            danceability: song.danceability,
+            energy: song.energy,
+            instrumentalness: song.instrumentalness,
+            liveness: song.liveness,
+            loudness: song.loudness,
+            tempo: song.tempo,
+            valence: song.valence,
+        }
+        return song
+    }).catch(error => {console.error(error)});
+}
 
 
 
