@@ -80,28 +80,28 @@ export const getToken = async (code: string) => {
  * refreshes the access token
  */
 export const refreshToken = async () => {
-    const refreshToken = localStorage.getItem('refresh_token');
-    if (refreshToken){
-    const url = "https://accounts.spotify.com/api/token"
-     const payload = {
-       method: 'POST',
-       headers: {
-         'Content-Type': 'application/x-www-form-urlencoded'
-       },
-       body: new URLSearchParams({
-         grant_type: 'refresh_token',
-         refresh_token: refreshToken,
-         client_id: clientID
-       }),
-     }
-     const body = await fetch(url, payload);
-     const response = await body.json();
-     localStorage.setItem('access_token', response.accessToken);
-     localStorage.setItem('refresh_token', response.refreshToken);
+    const refreshToken = localStorage.getItem('refresh_token')
+    if (refreshToken) {
+        const url = "https://accounts.spotify.com/api/token"
+        const payload = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                grant_type: 'refresh_token',
+                refresh_token: refreshToken,
+                client_id: clientID
+            }),
+        }
+        const body = await fetch(url, payload)
+        const response = await body.json()
+        localStorage.setItem('access_token', response.accessToken)
+        localStorage.setItem('refresh_token', response.refreshToken)
     } else {
         console.error("Error: cant refresh token as there was no refresh_token stored")
     }
-   }
+}
 
 interface ISong {
     id: string
@@ -115,15 +115,34 @@ interface ISong {
     valence: number
 }
 
-export const getSong = (id: string) => {
+const likedSongs: ISong[] = []
+
+export const addLikedSong = (song: ISong | void) => {
+    if (song) {
+        likedSongs.push(song)
+    }
+}
+export const getSong = async (id: string) => {
     const accessToken = localStorage.getItem('access_token')
-    let songObj: ISong
-    fetch(`https://api.spotify.com/v1/audio-features/${id}`, {
-        method: 'GET',
-        headers: { 
-            Authorization: `Bearer ${accessToken}`
-        },
-    }).then(response => response.json()).then(song => {
+    let songObj: ISong = {
+        id: "",
+        acousticness: 0,
+        danceability: 0,
+        energy: 0,
+        instrumentalness: 0,
+        liveness: 0,
+        loudness: 0,
+        tempo: 0,
+        valence: 0,
+    }
+    try {
+        const body = await fetch(`https://api.spotify.com/v1/audio-features/${id}`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            },
+        })
+        const song = await body.json()
         songObj = {
             id: song.id,
             acousticness: song.acousticness,
@@ -135,23 +154,17 @@ export const getSong = (id: string) => {
             tempo: song.tempo,
             valence: song.valence,
         }
-        console.log(songObj)
-        return songObj
-    }).catch(error => {console.error(error)});
+    } catch (e) {
+        console.error(e)
+    }
+    return songObj
 }
 
-const likedSongs: ISong[] = []
-
-const addLikedSong = (song: ISong) => {
-    likedSongs.push(song)
-}
-
-const getRecommendations = () => {
+export const getRecommendations = async () => {
     const accessToken = localStorage.getItem('access_token')
-    const url = "https://api.spotify.com/v1/recommendations?"
     const params = {
-        limit: 5,
-        seed_tracks: new Array<string>(),
+        limit: 15,
+        seed_tracks: "",
         target_acousticness: 0,
         target_danceability: 0,
         target_energy: 0,
@@ -162,25 +175,70 @@ const getRecommendations = () => {
         target_valence: 0,
     }
     likedSongs.slice(-5).forEach((song: ISong) => {
-        params.seed_tracks.push(song.id)
-        params.target_acousticness += song.acousticness/5
-        params.target_danceability += song.danceability/5
-        params.target_energy += song.energy/5
-        params.target_instrumentalness += song.instrumentalness/5
-        params.target_liveness += song.liveness/5
-        params.target_loudness += song.loudness/5
-        params.target_tempo += song.tempo/5
-        params.target_valence += song.valence/5
+        params.seed_tracks += `${song.id},`
+        params.target_acousticness += Math.round(song.acousticness * 20)/100
+        params.target_danceability += Math.round(song.danceability * 20)/100
+        params.target_energy += Math.round(song.energy * 20)/100
+        params.target_instrumentalness += Math.round(song.instrumentalness * 20)/100
+        params.target_liveness += Math.round(song.liveness * 20)/100
+        params.target_loudness += Math.round(song.loudness * 20)/100
+        params.target_tempo += Math.round(song.tempo * 20)/100
+        params.target_valence += Math.round(song.valence * 20)/100
     })
+    params.seed_tracks = params.seed_tracks.slice(0, -1)
     const urlParams = new URLSearchParams("")
     for (const [key, value] of Object.entries(params)) {
-        urlParams.append(key, value)
+        urlParams.append(key, value.toString())
     }
-    fetch("https://api.spotify.com/v1/recommendations", {
+    try {
+        const body = await fetch(`https://api.spotify.com/v1/recommendations?${urlParams.toString()}`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            },
+        })
+        const obj = await body.json()
+        setTimeout(()=> {}, 500)
+        return obj
+    } catch (e) {
+        console.error(e)
+    }
+}
 
+let songQueue: string[] = []
+
+const refreshQueue = () => {
+    getRecommendations().then(r => {
+        songQueue = r.tracks.map((song: any) => {return song.id})
     })
 }
 
+const getSongFromQueue = ():string => {
+    songQueue.reverse()
+    const ret = songQueue.pop()
+    songQueue.reverse()
+    return typeof ret === "string" ? ret : '37nYSBS0MfRCm913QwCCYo'
+}
+
+export const nextSong = () => {
+    const id = getSongFromQueue()
+    if (!songQueue.length) {
+        refreshQueue()
+    }
+    return id
+}
+
+export const likeSong = (songId: string) => {
+    getSong(songId).then(songObj => {
+        addLikedSong(songObj)
+        refreshQueue()
+    }).catch(e => {console.error(e)})
+} 
+
+export const init = (songId: string) => {
+    likeSong(songId)
+    
+}
 
 
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { authorizeUser, getToken, getSong } from './spotifyManager'
+import { authorizeUser, getToken, getSong, addLikedSong, getRecommendations, nextSong, init, likeSong } from './spotifyManager'
 import PlayerEmbed from './Components/PlayerEmbed'
 
 let code: string | null
@@ -27,7 +27,12 @@ function App() {
       <button onClick={authorizeUser}>click</button>
       <PlayerEmbed songId={songId}/>
       <button onClick={() => {setSongId('37nYSBS0MfRCm913QwCCYo')}}>song</button>
-      <button onClick={() => {getSong('37nYSBS0MfRCm913QwCCYo')}}>consolelog</button>
+      <button onClick={() => {getSong('37nYSBS0MfRCm913QwCCYo').then(r => {addLikedSong(r)})}}>consolelog</button>
+      <button onClick={() => {getSong(songId).then(r => {addLikedSong(r)})}}>like</button>
+      <button onClick={() => {getRecommendations().then(r => {setSongId(r.tracks[0].id)})}}>rec</button>
+      <button onClick={() => {likeSong(songId); setSongId(nextSong())}}>like song new</button>
+      <button onClick={() => {setSongId(nextSong())}}>next song new</button>
+      <button onClick={() => {init('37nYSBS0MfRCm913QwCCYo'); setSongId(nextSong())}}>init</button>
     </div>
   )
 }
