@@ -114,7 +114,7 @@ const checkFetch = (response: Response) => {
             throw new Error(`bad request: ${response.url}`)
         case 401:
             window.alert(`unauthorized: ${response.url}`)
-            refreshToken()
+            //refreshToken()
             throw new Error(`unauthorized: ${response.url}`)
     }
 }
@@ -262,7 +262,7 @@ export const init = (songId: string) => {
     return getSongFromQueue()
 }
 
-interface ISearchResult {
+export interface ISearchResult {
     id: string,
     name: string,
     artist: string,
@@ -310,8 +310,8 @@ export const searchForSong = async (query: string) => {
         return {
             id: item.id,
             name: item.name,
-            artists: getArtistNames(item.artists),
-            image: item.album.images[0].url,
+            artist: getArtistNames(item.artists),
+            imageUrl: item.album.images[0].url,
         }
     })
     return resultsObj
