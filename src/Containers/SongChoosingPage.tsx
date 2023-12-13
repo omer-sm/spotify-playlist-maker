@@ -1,25 +1,39 @@
 import React from "react"
 import Stack from "@mui/joy/Stack"
 import PlayerEmbed from '../Components/PlayerEmbed'
-import ThumbDownAltRoundedIcon from '@mui/icons-material/ThumbDownAltRounded'
-import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded'
-import IconButton from "@mui/joy/IconButton"
+import SwipeArea from "../Components/SwipeArea"
+import { addLikedSongsToPlaylist } from "../spotifyManager"
+import Button from "@mui/joy/Button"
+import Typography from "@mui/joy/Typography"
+import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded'
+import ReplayRoundedIcon from '@mui/icons-material/ReplayRounded';
 import Tooltip from "@mui/joy/Tooltip"
-import { nextSong, likeSong } from "../spotifyManager"
 
-export default function SongChoosingPage({ songId, setSongId }: { songId: string, setSongId: Function }) {
+export default function SongChoosingPage({ songId, setSongId, setStage }: { songId: string, setSongId: Function, setStage: Function }) {
+    const [showPlaylistCreatedTooltip, setShowPlaylistCreatedTooltip] = React.useState(false)
     return (
-        <Stack>
+        <Stack spacing={2}>
             <PlayerEmbed songId={songId} />
-            <Stack direction="row" justifyContent="space-around" >
-                <IconButton variant="soft" sx={{ width: "30%", height: "4rem" }}
-                onClick={() => { setSongId(nextSong()) }}>
-                    <ThumbDownAltRoundedIcon sx={{ height: "80%", width: "80%" }} />
-                </IconButton>
-                <IconButton variant="soft" sx={{ width: "30%", height: "4rem" }}
-                 onClick={() => { likeSong(songId); setSongId(nextSong()) }}>
-                    <ThumbUpAltRoundedIcon sx={{ height: "80%", width: "80%" }} />
-                </IconButton>
+            <SwipeArea songId={songId} setSongId={setSongId} />
+            <Stack direction="row" spacing={4} justifyContent="center">
+                <Button onClick={()=>{
+                    setSongId("")
+                    setStage(1)
+                    }} color="warning">
+                    <ReplayRoundedIcon />
+                    <Typography ml={0.3}>Choose another song</Typography>
+                </Button>
+                <Tooltip title="Playlist created!" open={showPlaylistCreatedTooltip}>
+                <Button onClick={() => { addLikedSongsToPlaylist().then(r => {
+                    if (r){
+                        setShowPlaylistCreatedTooltip(true)
+                        setTimeout(()=>{setShowPlaylistCreatedTooltip(false)}, 2000)
+                    }
+                }) }} color="success">
+                    <AddCircleOutlineRoundedIcon />
+                    <Typography ml={0.3}>Create playlist!</Typography>
+                </Button>
+                </Tooltip>
             </Stack>
         </Stack>
     )

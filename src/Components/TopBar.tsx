@@ -5,7 +5,7 @@ import Typography from "@mui/joy/Typography"
 export default function TopBar() {
     return (
         <Sheet variant="soft" sx={{width: "100vw"}}>
-            <Typography level="h3" sx={{margin: "0.5rem"}} color="success" >Playlist Thing</Typography>
+            <Typography level="h3" sx={{margin: "0.5rem"}} color="success" >My Playlist Thing</Typography>
         </Sheet>
     )
 }

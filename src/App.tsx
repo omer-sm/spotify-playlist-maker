@@ -1,14 +1,11 @@
 import React from 'react'
-import { getToken, nextSong, init, likeSong, searchForSong } from './spotifyManager'
-import PlayerEmbed from './Components/PlayerEmbed'
+import { getToken, addLikedSongsToPlaylist } from './spotifyManager'
 import { CssVarsProvider } from '@mui/joy/styles'
 import Sheet from "@mui/joy/Sheet"
 import Stack from "@mui/joy/Stack"
 import TopBar from './Components/TopBar'
 import Card from "@mui/joy/Card"
 import MainPage from './Containers/MainPage'
-
-
 
 function App() {
   const [songId, setSongId] = React.useState("")
@@ -41,7 +38,7 @@ function App() {
         <Stack justifyContent="flex-start" alignItems="center" spacing={2} height="100%" pb={2}>
           <TopBar />
           <Card sx={{ minWidth: "min(50rem, 90%)", width: "fit-content", maxWidth: "50rem", height: "100%" }}>
-            <MainPage stage={stage} setSongId={setSongId} songId={songId}/>
+            <MainPage stage={stage} setSongId={setSongId} songId={songId} setStage={setStage}/>
           </Card>
         </Stack>
       </Sheet>

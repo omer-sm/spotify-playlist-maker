@@ -31,7 +31,7 @@ function DebounceInput(props: InputProps & DebounceProps) {
 export default function SongSearchInput({setResults}: {setResults: Function}) {
   const [debouncedValue, setDebouncedValue] = React.useState('');
   const handleDebounce = (value: string) => {
-    setDebouncedValue(value);
+    setDebouncedValue(value.trim());
   };
   React.useEffect(() => {
     if (debouncedValue.length > 1){
@@ -44,10 +44,9 @@ export default function SongSearchInput({setResults}: {setResults: Function}) {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
       <DebounceInput
         placeholder="Search song.."
-        debounceTimeout={800}
+        debounceTimeout={700}
         handleDebounce={handleDebounce}
       />
-      <Typography>Debounced input: {debouncedValue}</Typography>
     </Box>
   );
 }

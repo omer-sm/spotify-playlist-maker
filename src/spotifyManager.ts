@@ -26,7 +26,7 @@ const getCodeChallenge = async () => {
 
 //handle user authorization
 const clientID = "3423964c454a45518f97e5ade891b01e"
-const scope = 'user-read-private user-read-email'
+const scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private'
 const authUrl = new URL("https://accounts.spotify.com/authorize")
 const redirectUri = "http://localhost:3000"
 const requestUserAuth = (codeChallenge: string) => {
@@ -315,5 +315,96 @@ export const searchForSong = async (query: string) => {
         }
     })
     return resultsObj
+}
+
+let userId = ""
+
+const getUserId = async () => {
+    if (userId.length) {
+        return userId
+    }
+    const accessToken = localStorage.getItem('access_token')
+    const body = await fetch("https://api.spotify.com/v1/me", {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        },
+    })
+    try {
+        checkFetch(body)
+    }
+    catch (e) {
+        console.log(e)
+        return
+    }
+    const obj = await body.json()
+    userId = obj.id
+    return userId
+}
+
+const createPlaylist = async () => {
+    const accessToken = localStorage.getItem('access_token')
+    const id = await getUserId()
+    const response = await fetch(`https://api.spotify.com/v1/users/${id}/playlists`, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json"
+        },
+        body: `{\n"name": "Songs I swiped right on!",\n"description": "made with omer's playlist maker thing :)",\n"public": false\n}`
+    })
+    try {
+        checkFetch(response)
+    }
+    catch (e) {
+        console.log(e)
+        return
+    }
+    const obj = await response.json()
+    return obj.id
+}
+
+let playlistId = ""
+
+export const getPlaylistId = async () => {
+    if (playlistId.length) {
+        return playlistId
+    }
+    const id = await createPlaylist()
+    playlistId = id
+    return id
+}
+
+const getLikedSongsIDs = () => {
+    let s = ""
+    likedSongs.forEach(song => {
+        s += `"spotify:track:${song.id}",`
+    })
+    s = s.slice(0, -1)
+    return s
+}
+
+export const addLikedSongsToPlaylist = async () => {
+    if (likedSongs.length > 90) {
+        console.log("liked songs is too big :(")
+    }
+    const id = await getPlaylistId()
+    const accessToken = localStorage.getItem('access_token')
+    const response = await fetch(`https://api.spotify.com/v1/playlists/${id}/tracks`, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json"
+        },
+        body: `{\n"uris": [${getLikedSongsIDs()}]}`
+    })
+    try {
+        checkFetch(response)
+    }
+    catch (e) {
+        console.log(e)
+        return false
+    }
+    return true
 }
 
