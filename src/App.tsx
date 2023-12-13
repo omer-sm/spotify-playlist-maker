@@ -17,7 +17,7 @@ function App() {
     const urlParams = new URLSearchParams(window.location.search)
     code = urlParams.get('code')
     if (typeof code === "string" && stage === 0) {
-      window.history.pushState({}, document.title, "/" );
+      window.history.pushState({}, document.title, "/spotify-playlist-maker" );
       getToken(code).then(r => {
         setStage(1)
       })

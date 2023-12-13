@@ -31,7 +31,7 @@ export default function SongChoosingPage({ songId, setSongId, setStage }: { song
                     }
                 }) }} color="success">
                     <AddCircleOutlineRoundedIcon />
-                    <Typography ml={0.3}>Create playlist!</Typography>
+                    <Typography ml={0.3}>Create playlist! Check your spotify 🔥</Typography>
                 </Button>
                 </Tooltip>
             </Stack>
