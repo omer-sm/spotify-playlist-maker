@@ -28,7 +28,7 @@ const getCodeChallenge = async () => {
 const clientID = "3423964c454a45518f97e5ade891b01e"
 const scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private'
 const authUrl = new URL("https://accounts.spotify.com/authorize")
-const redirectUri = "http://localhost:3000"
+const redirectUri = "https://omer-sm.github.io/spotify-playlist-maker"
 const requestUserAuth = (codeChallenge: string) => {
     const params = {
         response_type: 'code',
