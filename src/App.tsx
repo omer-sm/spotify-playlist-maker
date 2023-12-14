@@ -37,7 +37,7 @@ function App() {
       <Sheet variant="outlined" sx={{ height: "100vh", border: "none", display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "center" }}>
         <Stack justifyContent="flex-start" alignItems="center" spacing={2} height="100%" pb={2}>
           <TopBar />
-          <Card sx={{ minWidth: "min(50rem, 90%)", width: "fit-content", maxWidth: "50rem", height: "100%" }}>
+          <Card sx={{ minWidth: "min(10rem, 90%)", width: "min(50rem, 90%)", maxWidth: "50rem", height: "100%" }}>
             <MainPage stage={stage} setSongId={setSongId} songId={songId} setStage={setStage}/>
           </Card>
         </Stack>

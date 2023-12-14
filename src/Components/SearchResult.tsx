@@ -13,17 +13,16 @@ interface IProps extends ISearchResult {
 export default function SearchResult({name, artist, imageUrl, chooseResult}: IProps) {
     
     return (
-        <Card sx={{p: "0", maxHeight: "6rem"}} variant="soft">
-            <Stack direction="row" alignItems="center" spacing={2} justifyItems="stretch" height="6rem" justifyContent="space-between">
+        <Card sx={{p: "0", maxHeight: "6rem", background: `url(${imageUrl})`}} variant="soft">
+            <Stack direction="row" alignItems="center" spacing={2} justifyItems="stretch" height="6rem" justifyContent="space-between" width="101%" sx={{backdropFilter: "brightness(60%)"}}>
                 <Stack direction="row" spacing={2} justifyContent="center">
-                <img src={imageUrl} alt="song icon" style={{maxHeight: "6rem"}}/>
                 <Stack spacing={1} justifyContent="center">
-                    <Typography level="h2" sx={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "30rem"}}>{name}</Typography>
-                    <Typography level="body-md" sx={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "30rem"}}>{artist}</Typography>
+                    <Typography level="title-lg" pl={1} sx={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "30rem"}}>{name}</Typography>
+                    <Typography level="body-md" pl={1} sx={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "30rem"}}>{artist}</Typography>
                 </Stack>
                 </Stack>
-                <IconButton sx={{width: "6rem"}} onClick={() => {chooseResult()}}>
-                    <CheckCircleTwoToneIcon sx={{width: "70%", height: "70%"}}/></IconButton>
+                <IconButton sx={{width: "6rem", height: "6rem"}} onClick={() => {chooseResult()}}>
+                    <CheckCircleTwoToneIcon sx={{width: "4rem", height: "4rem"}}/></IconButton>
             </Stack>
         </Card>
     )

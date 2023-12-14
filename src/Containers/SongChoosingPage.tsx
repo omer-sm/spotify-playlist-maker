@@ -23,7 +23,7 @@ export default function SongChoosingPage({ songId, setSongId, setStage }: { song
                     <ReplayRoundedIcon />
                     <Typography ml={0.3}>Choose another song</Typography>
                 </Button>
-                <Tooltip title="Playlist created!" open={showPlaylistCreatedTooltip}>
+                <Tooltip title="Playlist created! Check your spotify 🔥" open={showPlaylistCreatedTooltip}>
                 <Button onClick={() => { addLikedSongsToPlaylist().then(r => {
                     if (r){
                         setShowPlaylistCreatedTooltip(true)
@@ -31,7 +31,7 @@ export default function SongChoosingPage({ songId, setSongId, setStage }: { song
                     }
                 }) }} color="success">
                     <AddCircleOutlineRoundedIcon />
-                    <Typography ml={0.3}>Create playlist! Check your spotify 🔥</Typography>
+                    <Typography ml={0.3}>Create playlist!</Typography>
                 </Button>
                 </Tooltip>
             </Stack>
